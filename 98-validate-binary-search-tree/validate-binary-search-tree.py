@@ -9,19 +9,22 @@ from itertools import pairwise
 class Solution:
 
     def inorder(self, root, result):
+        valid = True
         if not root:
-            return []
-        left = self.inorder(root.left, result)
+            return valid, []
+        valid_left, left = self.inorder(root.left, result)
         val = [root.val]
-        right = self.inorder(root.right, result)
-        return left + val + right
+        valid_right, right = self.inorder(root.right, result)
+        if (left and left[-1] == val[0]) or (right and right[0] == val[0]) or (not valid_left) or (not valid_right):
+            valid = False
+        out = left + val + right
+        return valid, out
 
     def isValidBST(self, root: TreeNode | None) -> bool:
-        result = self.inorder(root, [])
+        valid, result = self.inorder(root, [])
         sorted_result = result.copy()
         sorted_result.sort()
-
-        return sorted_result == result and all(a < b for a, b in pairwise(result))
+        return valid and sorted_result == result
         
         
         
